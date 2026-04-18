@@ -1,31 +1,24 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_ui_class/models/task_model.dart';
 
 class TaskCardWidget extends StatelessWidget {
-  final String title;
-  final String subtitle;
-  final IconData? icon;
+  final Task task;
+  final VoidCallback onDelete;
 
-  final VoidCallback? onTap;
-
-  const TaskCardWidget({super.key, required this.title, required this.subtitle, this.icon, this.onTap});
+  const TaskCardWidget({super.key, required this.task, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {
-
-    void _handleTap() {
-      print("The card was tapped for $title: $subtitle");
-    }
-
     return Card(
       elevation: 1,
       child: ListTile(
-        title: Text(title, style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
-        subtitle: Text(subtitle),
-        leading: icon != null ? Icon(icon) : Icon(Icons.task),
-        trailing: IconButton(
-          onPressed: onTap ?? _handleTap,
-          icon: Icon(Icons.arrow_forward_ios),
+        title: Text(
+          task.title,
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
+        subtitle: Text(task.description),
+        leading: Icon(Icons.task),
+        trailing: IconButton(onPressed: onDelete, icon: Icon(Icons.delete)),
       ),
     );
   }

@@ -1,10 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_ui_class/data/dummy_data.dart';
-import 'package:flutter_ui_class/models/card_data_model.dart';
 import 'package:flutter_ui_class/providers/task_management_provider.dart';
 import 'package:flutter_ui_class/utils/validators.dart';
 import 'package:flutter_ui_class/widgets/core_input_field.dart';
-import 'package:flutter_ui_class/widgets/password_input_filed.dart';
 import 'package:provider/provider.dart';
 
 class AddTaskPage extends StatefulWidget {
@@ -16,9 +13,6 @@ class AddTaskPage extends StatefulWidget {
 
 class _AddTaskPageState extends State<AddTaskPage> {
   final _titleController = TextEditingController();
-  final _assignedToController = TextEditingController();
-  final _phoneNumberController = TextEditingController();
-  final _passwordController = TextEditingController();
   final _descriptionController = TextEditingController();
 
   final _formKey = GlobalKey<FormState>();
@@ -33,11 +27,9 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
   @override
   void dispose() {
-    _titleController.clear();
-    _assignedToController.clear();
-    _phoneNumberController.clear();
-    _passwordController.clear();
-    _descriptionController.clear();
+    _titleController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
   }
 
   @override
@@ -63,27 +55,6 @@ class _AddTaskPageState extends State<AddTaskPage> {
 
               const SizedBox(height: 20),
               CoreInputField(
-                controller: _assignedToController,
-                keyboardType: TextInputType.text,
-                maxLines: 1,
-                labelText: "Assigned To",
-                validator: CustomValidators.validateAssignedTo,
-              ),
-
-              const SizedBox(height: 20),
-              CoreInputField(
-                controller: _phoneNumberController,
-                keyboardType: TextInputType.phone,
-                maxLines: 1,
-                labelText: "Phone Number",
-                validator: CustomValidators.validatePhoneNumber,
-              ),
-
-              const SizedBox(height: 20),
-              PasswordInputFiled(controller: _passwordController),
-
-              const SizedBox(height: 40),
-              CoreInputField(
                 controller: _descriptionController,
                 keyboardType: TextInputType.multiline,
                 maxLines: 6,
@@ -98,16 +69,11 @@ class _AddTaskPageState extends State<AddTaskPage> {
       bottomNavigationBar: Container(
         padding: EdgeInsets.symmetric(horizontal: 30, vertical: 30),
         child: ElevatedButton(
-          onPressed: () {
+          onPressed: () async {
             if (_formKey.currentState!.validate()) {
-              final String taskDetails =
-                  "Assigned to: ${_assignedToController.text} \nPhone: ${_phoneNumberController.text} \nDescription: ${_descriptionController.text} \n \n The task Password is ${_passwordController.text}";
-
-              taskProvider.addTaskExternal(
-                CardDataModel(
-                  title: _titleController.text,
-                  subtitle: taskDetails,
-                ),
+              await taskProvider.addTask(
+                _titleController.text,
+                _descriptionController.text,
               );
 
               Navigator.of(context).pop();
@@ -115,7 +81,7 @@ class _AddTaskPageState extends State<AddTaskPage> {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text(
-                    "Task added successfully!,",
+                    "Task added successfully!",
                     style: TextStyle(color: Colors.white),
                   ),
                   backgroundColor: Colors.green,
